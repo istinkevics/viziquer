@@ -1,4 +1,9 @@
 
+const isSparql = function() {
+	const project_id = Session.get('activeProject');
+	const project = Projects.findOne({ _id: project_id });
+	return project && (!project.type || project.type === 'sparql');
+};
 // Start of diagramsTemplate template
 
 //calculates the view to render
@@ -141,12 +146,11 @@ Template.diagramsRibbon.helpers({
 		return tool.name;
 	},
 
-	isSparql: function() {
-		const project_id = Session.get('activeProject');
-		const project = Projects.findOne({ _id: project_id });
+	isSparql,
+});
 
-		return project && (!project.type || project.type === 'sparql');
-	},
+Template.diagramTemplate.helpers({
+	isSparql,
 });
 
 // End of diagramsRibbon template
