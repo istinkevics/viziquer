@@ -232,6 +232,13 @@ Schemas.Projects = new SimpleSchema({
         label: "Projects.toolId",
         // denyUpdate: true,
     },
+
+	type: {
+        type: String,
+        allowedValues: ['sparql', 'mysql'],
+        label: "Projects.type",
+    },
+
 });
 Projects.attachSchema(Schemas.Projects);
 

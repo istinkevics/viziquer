@@ -84,6 +84,10 @@ Template.diagramsRibbon.events({
 		$('#import-ontology-form').modal("show");
 	},
 
+	'click #importSchema': function(e, templ) {
+		$('#import-schema-form').modal("show");
+	},
+
 	'click #settings': function(e, templ) {
 		$('#ontology-settings-form').modal("show");
 	},
@@ -132,12 +136,17 @@ Template.diagramsRibbon.helpers({
 		if (!tool) {
 			console.error("No tool", project.toolId);
 			return;
-		}		
+		}
 
 		return tool.name;
-	}
+	},
 
+	isSparql: function() {
+		const project_id = Session.get('activeProject');
+		const project = Projects.findOne({ _id: project_id });
 
+		return project && (!project.type || project.type === 'sparql');
+	},
 });
 
 // End of diagramsRibbon template
@@ -518,7 +527,7 @@ Template.importOntology.events({
 		var fileList = $("#fileList")[0].files;
 	    _.each(fileList, function(file) {
 
-		
+
 
 	        var reader = new FileReader();
 
@@ -527,7 +536,7 @@ Template.importOntology.events({
 			//console.log(reader.result);
 			//var x=require('n3').Parser().parse(require('fs').readFileSync('UnivExample_hasMarkS2.n3').toString())
 			//Utilities.callMeteorMethod("loadTriplesMaps", reader.result);
-			
+
 				var data = JSON.parse(reader.result)
 
 				if (data)
@@ -537,16 +546,16 @@ Template.importOntology.events({
 									versionId: Session.get("versionId"),
 									data: data,
 								};
-						  Utilities.callMeteorMethod("loadMOntology", list); 					
+						  Utilities.callMeteorMethod("loadMOntology", list);
 					}
 					else {
 						var list = {projectId: Session.get("activeProject"),
 									versionId: Session.get("versionId"),
 									data: { Data: data },
-								};					
-						Utilities.callMeteorMethod("loadTriplesMaps", list ); 					
+								};
+						Utilities.callMeteorMethod("loadTriplesMaps", list );
 					}
-					
+
 
 					//if ( data.Schema ) {
 					//	Utilities.callMeteorMethod("loadMOntology", list); }
@@ -561,13 +570,43 @@ Template.importOntology.events({
 	        }
 	        reader.readAsText(file);
 	    });
-		
 
 
 
-		
+
+
 
 	},
+
+});
+
+
+Template.importSchema.events({
+    'click #ok-import-schema' : function(e, templ) {
+        $('#import-schema-form').modal('hide');
+        const fileList = $('#schemaFileList')[0].files;
+        _.each(fileList, function(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const data = JSON.parse(reader.result)
+                if (data && data.tables) {
+                    const list = {
+                        projectId: Session.get('activeProject'),
+                        versionId: Session.get('versionId'),
+                        data: data,
+                    };
+                    Utilities.callMeteorMethod('loadMysqlSchema', list);
+                }
+            }
+
+            reader.onerror = function(error) {
+                console.error("Error: ", error);
+            }
+            reader.readAsText(file);
+        });
+
+    },
 
 });
 
@@ -941,7 +980,7 @@ Template.migrateForm.helpers({
 Template.migrateForm.events({
 
 	'click #migrate-to': function(e, templ) {
-		
+
 		$('#migrate-form').modal("hide");
 		var tool_name = $("#migrate-tools").find(":selected").attr("value");
 		Meteor.call("migrate", {projectId: Session.get("activeProject"), toolName: tool_name,})

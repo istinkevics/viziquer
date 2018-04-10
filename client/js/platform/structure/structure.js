@@ -17,7 +17,7 @@ Template.structureTemplate.helpers({
 				var proj_id = user_proj["projectId"];
 
 				var project = Projects.findOne({_id: proj_id});
-				
+
 				var category = "";
 				if (project) {
 					user_proj["name"] = project["name"];
@@ -84,7 +84,7 @@ Template.structureTemplate.events({
 	},
 
 	'mouseleave .project-container': function(e) {
-		$(e.target).closest(".container").find(".project-dropdown-container").addClass("hidden");								
+		$(e.target).closest(".container").find(".project-dropdown-container").addClass("hidden");
 	},
 
 	'click .project-path': function(e) {
@@ -93,12 +93,12 @@ Template.structureTemplate.events({
 		var src = $(e.target).closest(".project-path");
 		var proj_id = src.attr("id");
 		var version_id = Utilities.changeUserActiveProject(proj_id);
-    
+
     	Router.go("diagrams", {projectId: proj_id, versionId: version_id});
 
 		return;
 	},
-  
+
   	'click .project-dropdown-container': function(e) {
 		e.stopPropagation();
 		$(e.target).closest(".container").find(".project-dropdown-container").addClass("open")
@@ -157,8 +157,8 @@ Template.structureTemplate.events({
 
 		Utilities.callMeteorMethod("leaveProject", list);
 
-		
-		
+
+
 
 		return;
 	},
@@ -181,6 +181,15 @@ Template.createProjectModal.helpers({
 	tools: function() {
 		return Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}});
 	},
+
+	types: function() {
+		// TODO: move out to relation
+		return [{
+			name: 'sparql'
+		}, {
+			name: 'mysql'
+		}];
+	},
 });
 
 Template.createProjectModal.events({
@@ -195,6 +204,7 @@ Template.createProjectModal.events({
 
 		var project_name = project_name_obj.val();
 		var tool_id = $("#tool").find(":selected").attr("id");
+		var type = $("#type").find(":selected").attr("id");
 		var icon_name = icon_name_obj.val();
 		var category_name = category_obj.val();
 
@@ -204,7 +214,8 @@ Template.createProjectModal.events({
 		var list = {name: project_name,
 					icon: icon_name,
 					category: category_name,
-		            toolId: tool_id,
+					toolId: tool_id,
+					type,
 				};
 
 		Utilities.callMeteorMethod("insertProject", list);
@@ -235,7 +246,7 @@ Template.editProjectModal.events({
 		var icon_name = $("#edit-icon-name").val();
 		var category_name = $("#edit-category-name").val();
 		var proj_id = Session.get("editProjectId");
-		
+
 		var list = {projectId: proj_id,
 					set: {name: project_name, icon: icon_name, category: category_name},
 				};
