@@ -1285,67 +1285,6 @@
                         "label": "Expression"
                       },
                       {
-                        "_id": "4727f620bbedd3f1f98bde47",
-                        "index": 4,
-                        "name": "Require Values",
-                        "extensionPoints": [
-                          {
-                            "extensionPoint": "afterUpdate",
-                            "procedure": ""
-                          }
-                        ],
-                        "prefix": null,
-                        "suffix": null,
-                        "defaultValue": null,
-                        "inputType": {
-                          "type": "checkbox",
-                          "values": [
-                            {
-                              "compartmentStyle": "NoStyle",
-                              "elementStyle": "NoStyle",
-                              "input": "true",
-                              "value": "{+} "
-                            },
-                            {
-                              "compartmentStyle": "NoStyle",
-                              "elementStyle": "NoStyle",
-                              "input": "false",
-                              "value": ""
-                            }
-                          ]
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "Require Values"
-                      },
-                      {
-                        "_id": "d6e2cda95d0c78943ea28f0c",
-                        "index": 6,
-                        "name": "IsInternal",
-                        "extensionPoints": [],
-                        "prefix": null,
-                        "suffix": null,
-                        "defaultValue": false,
-                        "inputType": {
-                          "type": "checkbox",
-                          "values": [
-                            {
-                              "compartmentStyle": "NoStyle",
-                              "elementStyle": "NoStyle",
-                              "input": "true",
-                              "value": "{internal} "
-                            },
-                            {
-                              "compartmentStyle": "NoStyle",
-                              "elementStyle": "NoStyle",
-                              "input": "false",
-                              "value": ""
-                            }
-                          ]
-                        },
-                        "subCompartmentTypes": [],
-                        "label": "IsInternal"
-                      },
-                      {
                         "_id": "6acfdf47ee1fba6719148227",
                         "index": 2,
                         "name": "GroupValues",
@@ -1531,71 +1470,6 @@
                       "fontSize": 14,
                       "fontStyle": "normal",
                       "fontFamily": "Candara",
-                      "fontVariant": "normal",
-                      "strokeWidth": "1"
-                    }
-                  }
-                ],
-                "extensionPoints": [
-                  {
-                    "extensionPoint": "beforeUpdate"
-                  },
-                  {
-                    "extensionPoint": "update",
-                    "procedure": "UpdateCompartment"
-                  },
-                  {
-                    "extensionPoint": "afterUpdate"
-                  },
-                  {
-                    "extensionPoint": "dynamicPrefix"
-                  },
-                  {
-                    "extensionPoint": "dynamicSuffix"
-                  },
-                  {
-                    "extensionPoint": "dynamicDefaultValue"
-                  },
-                  {
-                    "extensionPoint": "dynamicDropDown"
-                  }
-                ],
-                "dialogTabId": "KiG3o5HNPFGp3yBSL"
-              }
-            },
-            {
-              "object": {
-                "_id": "pDFFRme2jgGjcYXfP",
-                "elementTypeId": "anWprTkSpmzTJFuht",
-                "diagramTypeId": "H8FbavhKxukuL7H57",
-                "diagramId": "g2oxtjrRvysrzKYoW",
-                "elementId": "vKxiKrnQfb5iE9tLe",
-                "tabIndex": 110,
-                "index": 26,
-                "toolId": "uJLBq3nfNPYpH8J8L",
-                "versionId": "XwXznebhuKvqMhi5s",
-                "name": "FullMySQL",
-                "label": "FullMySQL",
-                "isObjectRepresentation": false,
-                "noRepresentation": false,
-                "inputType": {
-                  "type": "textarea",
-                  "inputType": "text",
-                  "rows": 3
-                },
-                "styles": [
-                  {
-                    "name": "Default",
-                    "id": "5185d172874d87ec54e60dd6",
-                    "style": {
-                      "align": "left",
-                      "fill": "#000000",
-                      "padding": 2,
-                      "placement": "start-left",
-                      "visible": true,
-                      "fontSize": 11,
-                      "fontStyle": "normal",
-                      "fontFamily": "Arial",
                       "fontVariant": "normal",
                       "strokeWidth": "1"
                     }

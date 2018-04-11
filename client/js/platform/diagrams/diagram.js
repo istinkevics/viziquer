@@ -6,7 +6,7 @@ const isToolMySQL = function() {
 		// TODO: add normal check :)
 		// console.log(compartment, project);
 		// return compartment && compartment.inputType.templateName === 'mysqlSchemaTree';
-		return false;
+		return true;
 	}
 	return false;
 };
@@ -328,6 +328,25 @@ Template.sparqlForm_see_results.onRendered(function() {
 	//yasqe.setValue("A");
 });
 
+yasqe = null;
+
+Template.mysqlForm.onRendered(function() {
+
+	yasqe3 = YASQE.fromTextArea(document.getElementById("generated-mysql"), {
+		sparql: {
+			showQueryButton: false,
+		},
+		//autoRefresh: true,
+	});
+
+	yasqe3.on("blur", function(editor){
+		var val = editor.getValue();
+	 Session.set("generatedSparql", val);
+	 yasqe.setValue(val);
+	// yasqe.refresh();
+	});
+	//yasqe3.setValue("3");
+});
 
 Template.sparqlForm_see_results.events(sparql_form_events);
 

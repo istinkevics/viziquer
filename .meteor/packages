@@ -43,3 +43,4 @@ peerlibrary:xml2js
 rzymek:pegjs
 twbs:bootstrap
 dynamic-import@0.2.0
+ecmascript
