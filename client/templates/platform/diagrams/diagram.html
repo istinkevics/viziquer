@@ -37,10 +37,10 @@
                     </div>
                   </div>
                   <div class="row">
-                        {{#if isSparql}}
-                            {{> sparqlForm}}
-                        {{else}}
+                        {{#if isToolMySQL}}
                             {{> mysqlForm}}
+                        {{else}}
+                            {{> sparqlForm}}
                         {{/if}}
                   </div>
               </div>

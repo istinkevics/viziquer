@@ -195,13 +195,16 @@ VQ_Schema = function () {
    this.SchemaProperties = {};
    this.Associations = {};
    this.SchemaRoles = {};
-   this.Ontologies = {};
+	 this.Ontologies = {};
+	 this.Tables = {}; // TODO: create separate object
 
    if (Schema.find().count() == 0)
    { return; }
 
    var data = Schema.findOne();
-   if (data.Schema) data = data.Schema;
+	 if (data.Schema) data = data.Schema;
+
+	 if (data.tables) this.Tables = data.tables;
 
    var schema = this;
    if (data.namespace) this.namespace = data.namespace;

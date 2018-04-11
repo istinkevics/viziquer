@@ -4,7 +4,7 @@
 get_user_rights_to_access_project = function(list, user_system_id) {
 	if (list) {
 		var proj_id = list["projectId"];
-		
+
 		//checks if user has logged in
 		if (user_system_id) {
 			var user = ProjectsUsers.findOne({userSystemId: user_system_id, projectId: proj_id});
@@ -35,10 +35,10 @@ get_user_rights_to_access_project = function(list, user_system_id) {
 						}
 						else {
 							return {isValidUser: false,
-								error: "There is not such a project with the specified tool"};	
+								error: "There is not such a project with the specified tool"};
 						}
 					}
-					
+
 					var version = Versions.findOne(version_query);
 					if (version) {
 
@@ -47,8 +47,8 @@ get_user_rights_to_access_project = function(list, user_system_id) {
 							return {isValidUser: true,
 									role: user["role"]};
 
-						//New versions are availabe only for the admins and system admins 
-						//TODO: If user is a system admin, 
+						//New versions are availabe only for the admins and system admins
+						//TODO: If user is a system admin,
 						//then he also has rights to access the project
 						else if (version["status"] == "New" && (user["role"] == "Admin")) {
 
@@ -61,7 +61,7 @@ get_user_rights_to_access_project = function(list, user_system_id) {
 					}
 					else {
 						return {isValidUser: false,
-								error: "There is not such a version in the project"};	
+								error: "There is not such a version in the project"};
 					}
 				}
 
@@ -75,7 +75,7 @@ get_user_rights_to_access_project = function(list, user_system_id) {
 								error: "User has no rights to access the project"};
 			}
 			else
-				return {isValidUser: false, error: "User has no rights to access the project"};	
+				return {isValidUser: false, error: "User has no rights to access the project"};
 		}
 		else
 			return {isValidUser: false, error: "User is not logged in"};
@@ -104,7 +104,7 @@ is_allowed_version = function(list) {
 	var version = Versions.findOne({_id: list["versionId"],
 									projectId: list["projectId"],
 									status: "New"});
-	
+
 	if (version && list["versionId"] == version["_id"])
 		return true;
 	else
@@ -139,12 +139,12 @@ build_user_search_query = function(text) {
 
 		//filters by name, surname or email
     	if (search_items.length == 1) {
-    		query = {$or: [{nameLC: {'$regex': "^" + search_items[0]}}, 
-    						{surnameLC: {'$regex': "^" + search_items[0]}}, 
+    		query = {$or: [{nameLC: {'$regex': "^" + search_items[0]}},
+    						{surnameLC: {'$regex': "^" + search_items[0]}},
     						{email: {'$regex': "^" + search_items[0]}}
     					]};
     	}
-    	else 
+    	else
     		if (search_items.length == 2) {
 				query = {$or: [
 					{$and: [{nameLC: {'$regex': "^" + search_items[0]}},
@@ -152,7 +152,7 @@ build_user_search_query = function(text) {
 
 					{$and: [{nameLC: {'$regex': "^" + search_items[1]}},
 							{surnameLC: {'$regex': "^" + search_items[0]}}]},
-				]};   		
+				]};
     		}
     		else
     			query = reset_query();
@@ -206,3 +206,14 @@ is_test_user = function(email) {
 			return true;
 	}
 }
+
+isToolMySQL = function() {
+	const project_id = Session.get('activeProject');
+	const project = Projects.findOne({ _id: project_id });
+	if (project) {
+		const tool = UserTools.findOne({ toolId: project.toolId });
+		// TODO: add normal check :)
+		return tool && tool.compartmentTypes[0].object.inputType.templateName === 'mysqlSchemaTree';
+	}
+	return false;
+};

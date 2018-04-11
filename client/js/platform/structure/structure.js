@@ -182,14 +182,6 @@ Template.createProjectModal.helpers({
 		return Tools.find({isDeprecated: {$ne: true},}, {$sort: {name: 1}});
 	},
 
-	types: function() {
-		// TODO: move out to relation
-		return [{
-			name: 'sparql'
-		}, {
-			name: 'mysql'
-		}];
-	},
 });
 
 Template.createProjectModal.events({

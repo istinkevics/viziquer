@@ -71,3 +71,27 @@
     </div><!-- /.modal -->
     <!-- End of add form-->
 </template>
+
+
+<template name="mysqlSchemaTree">
+    <div class="col-sm-12">
+        <div class="dd" id="nestable">
+            <ol class="dd-list">
+                {{#each tables}}
+                    <li class="dd-item class-item" data-id="{{localName}}">
+                        <button class="toggle-tree-button expand" type="button">&nbsp;</button>
+                        <div class="class-body dd-handle" value={{localName}}>{{localName}}</div>
+
+                        <ol class="dd-list attributes-list" style="display: none;">
+                            {{#each attributes}}
+                                <li class="dd-item" data-id="{{name}}">
+                                    <div class="dd-handle">{{name}} ({{ type }})</div>
+                                </li>
+                            {{/each}}
+                        </ol>
+                    </li>
+                {{/each}}
+            </ol>
+        </div>
+    </div>
+</template>

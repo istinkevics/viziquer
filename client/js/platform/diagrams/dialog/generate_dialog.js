@@ -49,7 +49,7 @@ Template.dialogTabContent.events({
 			var src_id = src.attr("id");
 			var selected = src.find("option:selected");
 			var src_val = selected.text();
-			var mapped_value = selected.attr("mappedValue");			
+			var mapped_value = selected.attr("mappedValue");
 
 			var elem_style_id = selected.attr("elementStyleId");
 			var compart_style_id = selected.attr("compartmentStyleId");
@@ -96,7 +96,7 @@ Template.dialogTabContent.events({
 			else {
 				mapped_value = src.attr("falseValue");
 				elem_style_id = src.attr("falseElementStyle");
-				compart_style_id = src.attr("falseCompartmentStyle");				
+				compart_style_id = src.attr("falseCompartmentStyle");
 			}
 
 			upsert_compartment_value(e, src_id, checkbox_value.toString(), mapped_value, elem_style_id, compart_style_id);
@@ -148,7 +148,7 @@ Template.dialogTabContent.events({
 	},
 
 	"click #upload-file": function(e) {
-		e.preventDefault();	
+		e.preventDefault();
 		$("#upload-file-form").modal("show");
 	},
 
@@ -178,7 +178,7 @@ Template.attachFiles.events({
 	"click .attach-file": function(e) {
 
 		var button = $(e.target).closest(".attach-file");
-		
+
 		var list = {projectId: Session.get("activeProject"),
 					versionId: Session.get("versionId"),
 					diagramId: Session.get("activeDiagram"),
@@ -215,7 +215,7 @@ Template.uploadFileFormInDiagram.events({
 		$("#upload-file-form").modal("hide");
 
 		uploader.send(file, function (error, file_url) {
-		  	
+
 			if (error) {
 				console.error('Error uploading', uploader.xhr.response);
 			}
@@ -269,7 +269,7 @@ function update_combobox(e) {
 		var src_val = src.val();
 
 		var selected = src.closest(".compart-type").find('option[input="'+src_val+'"]');
-		var mapped_value = selected.attr("mappedValue");			
+		var mapped_value = selected.attr("mappedValue");
 
 		var elem_style_id = selected.attr("elementStyleId");
 		var compart_style_id = selected.attr("compartmentStyleId");
@@ -291,20 +291,20 @@ function define_dialog_tab_template(id) {
 	compileTemplate(id, template_structure);
 }
 
-function compileTemplate(name, html_text) { 
-    try { 
-        var compiled = SpacebarsCompiler.compile(html_text, {isTemplate: true}); 
+function compileTemplate(name, html_text) {
+    try {
+        var compiled = SpacebarsCompiler.compile(html_text, {isTemplate: true});
         var renderer = eval(compiled);
         UI.Template.__define__(name, renderer);
 
         add_template_helpers(name);
-    } 
+    }
 
-    catch (err){ 
-        console.error('Error compiling template:' + html_text); 
-        console.error(err.message); 
-    } 
-}; 
+    catch (err){
+        console.error('Error compiling template:' + html_text);
+        console.error(err.message);
+    }
+};
 
 function add_template_helpers(id) {
 
@@ -343,7 +343,7 @@ build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 		var sub_sub_compart_types = sub_compart_type["subCompartmentTypes"];
 		if (sub_sub_compart_types.length == 0) {
 
-			var input_value, mapped_value;		
+			var input_value, mapped_value;
 			var input_control = parent.find("." + sub_compart_type["_id"]);
 			if (input_control.hasClass("dialog-input")) {
 				input_value = input_control.val();
@@ -382,15 +382,15 @@ build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 				else {
 					mapped_value = input_control.attr("falseValue");
 					elem_style_id = input_control.attr("falseElementStyle");
-					compart_style_id = input_control.attr("falseCompartmentStyle");				
+					compart_style_id = input_control.attr("falseCompartmentStyle");
 				}
 			}
-				
+
 			var value = build_compartment_value(sub_compart_type, input_value, mapped_value);
 			sub_compart_tree[sub_compart_type["label"]] = {value: value, input: input_value};
 			res.push(value);
 		}
-		
+
 		else {
 
 			var val = build_sub_compartment_tree(parent, sub_compart_type, sub_compart_tree);
@@ -404,7 +404,7 @@ build_sub_compartment_tree = function(parent, compart_type, compart_tree) {
 			}
 
 			res.push(val);
-	
+
 		}
 
 		//if there are more then one compartment; checking the last compartment
@@ -425,12 +425,12 @@ render_dialog_fields = function(compart_type, compartment) {
 	}
 	else {
  		compart_type["field_value"] = "";
- 		compart_type["compartmentId"] = reset_variable();					
+ 		compart_type["compartmentId"] = reset_variable();
 	}
 
 	if (compart_type["inputType"]) {
 		//compart_type["fieldType"] = compart_type["inputType"]["type"];
-		
+
 		compart_type[compart_type["inputType"]["type"]] = true;
 		compart_type["input_type"] = compart_type["inputType"]["inputType"];
 		compart_type["_rows"] = compart_type["inputType"]["rows"];
@@ -445,7 +445,7 @@ render_dialog_fields = function(compart_type, compartment) {
 			compart_input = compartment["input"];
 			compart_id = compartment["_id"];
 		}
-		
+
 		var dynamic_drop_down = Interpreter.getExtensionPointProcedure("dynamicDropDown", compart_type);
 		var values;
 
@@ -458,17 +458,17 @@ render_dialog_fields = function(compart_type, compartment) {
 			values = compart_type["inputType"]["values"];
 		}
 
-		compart_type["values"] = _.map(values, 
+		compart_type["values"] = _.map(values,
 			function(value_item) {
 
 				if (compart_input === value_item["input"]) {
-					value_item["selected"] = true;	
-					value_item["checked"] = "checked";		
+					value_item["selected"] = true;
+					value_item["checked"] = "checked";
 				}
 
 				value_item["compartmentTypeId"] = compart_type["_id"];
 				value_item["compartemntId"] = compart_id;
-				value_item["disabled"] = compart_type["disabled"];									
+				value_item["disabled"] = compart_type["disabled"];
 
 				return value_item;
 			}
@@ -487,13 +487,13 @@ render_dialog_fields = function(compart_type, compartment) {
 
 				if (cbx_value["input"] == "true") {
 					true_value = cbx_value["value"];
-					true_elem_style = cbx_value["elementStyle"];				
+					true_elem_style = cbx_value["elementStyle"];
 					true_compart_style = cbx_value["compartmentStyle"];
 				}
 
 				else {
 					false_value = cbx_value["value"];
-					false_elem_style = cbx_value["elementStyle"];				
+					false_elem_style = cbx_value["elementStyle"];
 					false_compart_style = cbx_value["compartmentStyle"];
 				}
 			});
@@ -575,7 +575,7 @@ render_dialog_fields = function(compart_type, compartment) {
 						}
 
 						else {
-							diagram_file["url"] = file["url"];	
+							diagram_file["url"] = file["url"];
 						}
 					}
 
@@ -666,7 +666,7 @@ Template.dialog.helpers({
 				}
 
 				//adds template id
-				tab["templateId"] = tab_id;	
+				tab["templateId"] = tab_id;
 			}
 
 			return tab;
@@ -684,20 +684,20 @@ function define_dialog_tab_template(id) {
 	compileTemplate(id, template_structure);
 }
 
-function compileTemplate(name, html_text) { 
-    try { 
-        var compiled = SpacebarsCompiler.compile(html_text, {isTemplate: true}); 
+function compileTemplate(name, html_text) {
+    try {
+        var compiled = SpacebarsCompiler.compile(html_text, {isTemplate: true});
         var renderer = eval(compiled);
         UI.Template.__define__(name, renderer);
 
         add_template_helpers(name);
-    } 
+    }
 
-    catch (err){ 
-        console.error('Error compiling template:' + html_text); 
-        console.error(err.message); 
-    } 
-}; 
+    catch (err){
+        console.error('Error compiling template:' + html_text);
+        console.error(err.message);
+    }
+};
 
 function add_template_helpers(id) {
 
@@ -745,7 +745,7 @@ function upsert_compartment_value(e, src_id, src_val, mapped_value, elemStyleId,
 	var compart_type = CompartmentTypes.findOne({_id: compart_type_id});
 
 	if (!compart_type) {
-		return; 
+		return;
 	}
 
 	Interpreter.executeExtensionPoint(compart_type, "beforeUpdate", [src_id, src_val]);

@@ -3,24 +3,7 @@ ShowSchemaTree = function () {
 	$("#schema-tree").modal("show");
 };
 
-
-Template.schemaTree.helpers({
-
-	classes: function() {
-    	var schema = new VQ_Schema();
-		if (schema) {
-			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
-				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}
-			}), "localName"), function(c) {return c.localName != " "});
-
-			return classes;
-		}
-	},
-
-});
-
-
-Template.schemaTree.events({
+const events = {
 
 	"click .toggle-tree-button": function(e) {
 		var toggle_button = $(e.target);
@@ -71,4 +54,39 @@ Template.schemaTree.events({
 
 	},
 
+};
+
+
+Template.schemaTree.helpers({
+
+	classes: function() {
+    	var schema = new VQ_Schema();
+		if (schema) {
+			var classes = _.filter(_.sortBy(_.map(schema.Classes, function(cl) {
+				return {localName:cl.localName, attributes: _.sortBy(cl.getAttributes(),"name")}
+			}), "localName"), function(c) {return c.localName != " "});
+
+			return classes;
+		}
+	},
+
 });
+
+
+Template.schemaTree.events(events);
+
+Template.mysqlSchemaTree.helpers({
+	tables() {
+		var schema = new VQ_Schema();
+		if (schema) {
+			return Object.keys(schema.Tables).map(t => ({
+				localName: t,
+				attributes: _.sortBy(schema.Tables[t].attributes, 'name')}),
+			);
+		}
+
+		return [];
+	},
+});
+
+Template.mysqlSchemaTree.events(events);
