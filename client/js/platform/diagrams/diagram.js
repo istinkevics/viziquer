@@ -1,3 +1,17 @@
+const isToolMySQL = function() {
+	const project_id = Session.get('activeProject');
+	const project = Projects.findOne({ _id: project_id });
+	if (project) {
+		const compartment = CompartmentTypes.findOne({ toolId: project.toolId });
+		// TODO: add normal check :)
+		// console.log(compartment, project);
+		// return compartment && compartment.inputType.templateName === 'mysqlSchemaTree';
+		return false;
+	}
+	return false;
+};
+
+Template.registerHelper('isToolMySQL', isToolMySQL);
 
 Interpreter.methods({
 
@@ -152,7 +166,6 @@ Template.diagramTemplate.helpers({
 
 		return templates;
 	},
-
 });
 
 var sparql_form_events = {

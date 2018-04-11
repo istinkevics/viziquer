@@ -207,13 +207,3 @@ is_test_user = function(email) {
 	}
 }
 
-isToolMySQL = function() {
-	const project_id = Session.get('activeProject');
-	const project = Projects.findOne({ _id: project_id });
-	if (project) {
-		const tool = UserTools.findOne({ toolId: project.toolId });
-		// TODO: add normal check :)
-		return tool && tool.compartmentTypes[0].object.inputType.templateName === 'mysqlSchemaTree';
-	}
-	return false;
-};
