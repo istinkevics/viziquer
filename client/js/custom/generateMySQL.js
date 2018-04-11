@@ -395,231 +395,99 @@ function generateClassIds(clazz, idTable, counter, parentClassId) {
     return { idTable: idTable, referenceTable: referenceTable };
 }
 
-// find all prefixes used it a SPARQL query
-// expressionTable - query abstract syntex table
-// prefixTable - table with prefixes find so far
-function findUsedPrefixes(expressionTable, prefixTable) {
-
-    for (var key in expressionTable) {
-        if (key == 'Prefix') {
-            if (typeof prefixTable[expressionTable[key]] === 'undefined') prefixTable[expressionTable[key]] = 1;
-            else prefixTable[expressionTable[key]] = prefixTable[expressionTable[key]] + 1;
-        }
-        if (typeof expressionTable[key] == 'object') prefixTable = findUsedPrefixes(expressionTable[key], prefixTable);
-    }
-    return prefixTable;
-}
-
-// find prefix, used most offen in query or empty prefix if it is already used
-// prefixTable - table with prefixes in a query
-function findEmptyPrefix(prefixTable) {
-    var prefix = null;
-
-    if (typeof prefixTable[""] === 'undefined') {
-        for (var key in prefixTable) {
-            if (typeof prefixTable[key] === 'number') {
-                if (prefix == null) prefix = key;
-                else if (prefixTable[key] > prefixTable[prefix]) prefix = key;
-            }
-        }
-    } else prefix = "";
-    return prefix
-}
 
 // generate MySQL query text
 // abstractQueryTable - abstract query sintex table
 function generateMySQLtext(abstractQueryTable) {
-    // var messages = [];
+    const messages = [];
+    const blocking = false;
+    const rootClass = abstractQueryTable['root'];
 
-    // var rootClass = abstractQueryTable["root"];
-    // var symbolTable = abstractQueryTable["symbolTable"];
-    // var parameterTable = abstractQueryTable["params"];
+    // Starting query...
+    const query = squel.select({ separator: "\n" });
 
-    // //generate table with unique class names in form [_id] = class_unique_name
-    // var generateIdsResult = generateIds(rootClass);
-    // var idTable = generateIdsResult["idTable"];
-    // var referenceTable = generateIdsResult["referenceTable"];
+    // Distinct
+    if (rootClass.distinct) {
+        query.distinct();
+    }
 
-    // //empty prefix in query
-    // var emptyPrefix = findEmptyPrefix(findUsedPrefixes(rootClass, []));
+    // From
+    if (rootClass.identification) {
+        query.from(rootClass.identification.localName);
+    }
 
-    // //table with unique variable names
-    // var variableNamesAll = [];
+    // Aggregations
+    if (rootClass.aggregations) {
+        rootClass.aggregations.forEach(aggregation => {
+            query.field(aggregation.exp, aggregation.alias);
+        });
+    }
 
-    // //table with field names (attributes, aggregations)
-    // var fieldNames = [];
+    // Fields
+    if (rootClass.fields) {
+        rootClass.fields.forEach(field => {
+            query.field(field.exp, field.alias);
+        });
+    }
 
-    // //counter for variables with equals names
-    // var counter = 0;
+    // Where
+    if (rootClass.conditions) {
+        rootClass.conditions.forEach(condition => {
+            query.where(condition.exp);
+        });
+    }
 
-    // var result = forAbstractQueryTable(rootClass, null, idTable[rootClass["identification"]["_id"]], idTable, variableNamesAll, counter, [], false, emptyPrefix, fieldNames, symbolTable, parameterTable, referenceTable);
+    // Order by
+    if (rootClass.orderings) {
+        rootClass.orderings.forEach(order => {
+            query.order(order.exp, !order.isDescending);
+        });
+    }
 
-    // messages = messages.concat(result["messages"]);
+    // Limit
+    if (rootClass.limit != null) {
+        if (!isNaN(rootClass.limit)) {
+            query.limit(rootClass.limit);
+        } else {
+            messages.push({
+                type: 'Warning',
+                message: 'LIMIT should contain only numeric values',
+                listOfElementId: [rootClass['identification']['_id']],
+                isBlocking: false
+            });
+        }
+    }
 
-    // sparqlTable = result["sparqlTable"];
-    // //console.log(result, JSON.stringify(sparqlTable,null,2));
+    // Offset
+    if (rootClass.offset != null) {
+        if (!isNaN(rootClass.offset)) {
+            query.offset(rootClass.offset);
+        } else {
+            messages.push({
+                type: 'Warning',
+                message: 'OFFSET should contain only numeric values',
+                listOfElementId: [rootClass['identification']['_id']],
+                isBlocking: false
+            });
+        }
+    }
 
-    // // table with prefixes used in query
-    // var prefixTable = result["prefixTable"];
+    if (messages.length > 0) {
+        let showMessages = '';
+        for (const message in messages) {
+            if (typeof messages[message] === 'object') {
+                if (messages[message]['isBlocking']) {
+                    blocking = true;
+                }
+                showMessages = showMessages + "\n\n" + messages[message]['message'];
+            }
+        }
+        Interpreter.showErrorMsg(showMessages, -3);
+    }
 
-    // var MySQLQuery = '';
+    const MySQLQuery = query.toString();
 
-    // // if root class is Union
-    // if (rootClass["isUnion"] == true) {
-    //     var unionResult = getUNIONClasses(sparqlTable, null, null, true, referenceTable);
-    //     MySQLQuery = unionResult["result"];
-    //     messages = messages.concat(unionResult["messages"]);
-    // } else {
-	// 	var query = squel.select();
-
-    //     // DISTINCT
-    //     if (rootClass["distinct"] == true && rootClass["aggregations"].length == 0) query.distinct();
-
-	// 	MySQLQuery = query.toString();
-    //     // console.log("sparqlTable", sparqlTable);
-    //     var selectResult = generateSELECT(sparqlTable);
-    //     console.log("selectResult", selectResult);
-    //     var tempSelect = selectResult["select"];
-    //     tempSelect = tempSelect.concat(selectResult["aggregate"]);
-
-    //     // remove duplicates
-    //     tempSelect = tempSelect.filter(function (el, i, arr) {
-    //         return arr.indexOf(el) === i;
-    //     });
-    //     if (tempSelect.length < 1) {
-    //         //Interpreter.showErrorMsg("Please specify at least one attribute (or * to select all attributes of the class)");
-    //         var listOfElementId = [];
-    //         for (var id in idTable) {
-    //             listOfElementId.push(id);
-    //         }
-    //         messages.push({
-    //             "type": "Error",
-    //             "message": "Please specify at least one attribute (or * to select all attributes of the class)",
-    //             "listOfElementId": listOfElementId,
-    //             "isBlocking": true
-    //         });
-    //     }
-    //     MySQLQuery += tempSelect.join(', ');
-    //     MySQLQuery += `\nWHERE`;
-
-    //     // SELECT DISTINCT
-    //     if (rootClass['distinct'] == true && rootClass['aggregations'].length > 0) {
-    //         MySQLQuery += `SELECT DISTINCT ${selectResult["innerDistinct"]} \nWHERE`;
-    //     }
-
-
-    //     var whereInfo = generateSPARQLWHEREInfo(sparqlTable, [], [], [], referenceTable);
-    //     var temp = whereInfo["triples"];
-    //     temp = temp.concat(whereInfo["links"]);
-    //     temp = temp.concat(whereInfo["filters"]);
-	// 	messages = messages.concat(whereInfo["messages"]);
-
-    //     var orderBy = getOrderBy(rootClass["orderings"], result["fieldNames"], rootClass["identification"]["_id"], idTable, emptyPrefix, referenceTable);
-    //     messages = messages.concat(orderBy["messages"]);
-    //     // add triples from order by
-    //     temp = temp.concat(orderBy["triples"]);
-
-    //     MySQLQuery = MySQLQuery + temp.join("\n");
-    //     if (rootClass["distinct"] == true && rootClass["aggregations"].length > 0) MySQLQuery = MySQLQuery + "}}";
-    //     // GROUP BY
-    //     var groupBy = selectResult["groupBy"].join(" ");
-    //     if (groupBy != "") groupBy = "\nGROUP BY " + groupBy;
-
-    //     if (rootClass["aggregations"].length > 0) MySQLQuery = MySQLQuery + groupBy;
-
-    //     // ORDER BY
-
-    //     if (orderBy["orders"] != "") MySQLQuery = MySQLQuery + "\nORDER BY " + orderBy["orders"];
-
-    //     // LIMIT
-    //     if (rootClass["limit"] != null) {
-    //         if (!isNaN(rootClass["limit"])) MySQLQuery = MySQLQuery + "\nLIMIT " + rootClass["limit"];
-    //         else {
-    //             //Interpreter.showErrorMsg("LIMIT should contain only numeric values");
-    //             messages.push({
-    //                 "type": "Warning",
-    //                 "message": "LIMIT should contain only numeric values",
-    //                 "listOfElementId": [rootClass["identification"]["_id"]],
-    //                 "isBlocking": false
-    //             });
-    //         }
-    //     }
-
-    //     // OFFSET
-    //     if (rootClass["offset"] != null) {
-    //         if (!isNaN(rootClass["offset"])) MySQLQuery = MySQLQuery + "\nOFFSET " + rootClass["offset"];
-    //         else {
-    //             //Interpreter.showErrorMsg("OFFSET should contain only numeric values");
-    //             messages.push({
-    //                 "type": "Warning",
-    //                 "message": "OFFSET should contain only numeric values",
-    //                 "listOfElementId": [rootClass["identification"]["_id"]],
-    //                 "isBlocking": false
-    //             });
-    //         }
-    //     }
-    // }
-
-    // var blocking = false;
-    // if (messages.length > 0) {
-    //     var showMessages = "";
-    //     for (var message in messages) {
-    //         if (typeof messages[message] === "object") {
-    //             if (messages[message]["isBlocking"] == true) {
-    //                 blocking = true;
-    //             }
-    //             showMessages = showMessages + "\n\n" + messages[message]["message"];
-    //         }
-    //     }
-    //     Interpreter.showErrorMsg(showMessages, -3);
-	// }
-	const messages = [];
-	const blocking = [];
-	const rootClass = abstractQueryTable['root'];
-	const query = squel.select({ separator: "\n" });
-
-	// Distinct
-	if (rootClass.distinct) {
-		query.distinct();
-	}
-
-	// From
-	if (rootClass.identification) {
-		query.from(rootClass.identification.localName);
-	}
-
-	// Aggregations
-	if (rootClass.aggregations) {
-		rootClass.aggregations.forEach(aggregation => {
-			query.field(aggregation.exp, aggregation.alias);
-		});
-	}
-
-	// Where
-	if (rootClass.conditions) {
-		rootClass.conditions.forEach(condition => {
-			query.where(condition.exp);
-		});
-	}
-
-	// Order by
-	if (rootClass.orderings) {
-		rootClass.orderings.forEach(order => {
-			query.order(order.exp, !order.isDescending);
-		});
-	}
-
-	// Limit
-	if (rootClass.limit) {
-		query.limit(rootClass.limit);
-	}
-
-	// Offset
-	if (rootClass.offset) {
-		query.limit(rootClass.offset);
-	}
-	console.log(abstractQueryTable);
-    return { "MySQLQuery": query.toString(), "messages": messages, "blocking": blocking };
+    return { MySQLQuery, messages, blocking };
 }
 
 function getPrefix(emptyPrefix, givenPrefix) {
@@ -1745,13 +1613,13 @@ function generateSELECT(sparqlTable) {
     }
     if (typeof sparqlTable["linkVariableName"] !== 'undefined') selectInfo.push(sparqlTable["linkVariableName"]);
 
-	// aggregateVariables
+    // aggregateVariables
     for (var number in sparqlTable["selectMain"]["aggregateVariables"]) {
         if (typeof sparqlTable["selectMain"]["aggregateVariables"][number]["alias"] === 'string') {
-			aggregateSelectInfo.push(
-				`${sparqlTable["selectMain"]["aggregateVariables"][number]["value"]} AS ${sparqlTable["selectMain"]["aggregateVariables"][number]["alias"]}`
-			);
-		}
+            aggregateSelectInfo.push(
+                `${sparqlTable["selectMain"]["aggregateVariables"][number]["value"]} AS ${sparqlTable["selectMain"]["aggregateVariables"][number]["alias"]}`
+            );
+        }
     }
     for (var number in sparqlTable["innerDistinct"]["aggregateVariables"]) {
         if (typeof sparqlTable["innerDistinct"]["aggregateVariables"][number] === 'string') {
