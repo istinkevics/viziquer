@@ -26,7 +26,7 @@
 
     </div>
 
-	<div class="row">
+    <div class="row">
 
         {{#if isDefaultView}}
             {{> defaultDiagramsView}}
@@ -34,7 +34,7 @@
             {{> treeDiagramsView}}
         {{/if}}
 
-	</div>
+    </div>
 
     {{> renameDiagramForm}}
 
@@ -424,16 +424,17 @@
 
         {{#if is_toolbar_enabled}}
             <span class="ribbon-button-alignment pull-right1">
-				<button id="add" class="btn btn-ribbon" data-title="New Diagram">New diagram</button>
-				{{#if isToolMySQL}}
-					<button id="importSchema" class="btn btn-ribbon" data-title="Import Schema"><i class="fa fa-upload"></i></button>
-				{{else}}
-					<button id="import" class="btn btn-ribbon" data-title="Import Ontology"><i class="fa fa-upload"></i></button>
-				{{/if}}
-            	<button id="settings" class="btn btn-ribbon" data-title="Settings"><i class="fa fa-gear"></i></button>
-            	<a id="download-project" class="btn btn-ribbon" data-title="Download Project"><i class="fa fa-cloud-download"></i></a>
+                <button id="add" class="btn btn-ribbon" data-title="New Diagram">New diagram</button>
+                {{#if isToolMySQL}}
+                    <button id="importSchema" class="btn btn-ribbon" data-title="Import Schema"><i class="fa fa-upload"></i></button>
+                    <button id="mysql-settings" class="btn btn-ribbon" data-title="Settings"><i class="fa fa-gear"></i></button>
+                {{else}}
+                    <button id="import" class="btn btn-ribbon" data-title="Import Ontology"><i class="fa fa-upload"></i></button>
+                    <button id="settings" class="btn btn-ribbon" data-title="Settings"><i class="fa fa-gear"></i></button>
+                {{/if}}
+                <a id="download-project" class="btn btn-ribbon" data-title="Download Project"><i class="fa fa-cloud-download"></i></a>
 
-            	<a id="upload-project" class="btn btn-ribbon" data-title="Upload Project"><i class="fa fa-cloud-upload"></i></a>
+                <a id="upload-project" class="btn btn-ribbon" data-title="Upload Project"><i class="fa fa-cloud-upload"></i></a>
 
                 <button id="migrate" class="btn btn-ribbon" data-title="Migrate"><i class="fa fa-wrench"></i></button>
 
@@ -444,10 +445,11 @@
     <!-- END RIBBON -->
 
     {{> addDiagram}}
-	{{> importOntology}}
-	{{> importSchema}}
+    {{> importOntology}}
+    {{> importSchema}}
     {{> uploadProject}}
     {{> ontologySettings}}
+    {{> mysqlSettings}}
     {{> migrateForm}}
 
     <a id="download-hack" style="display:none;">project-data</a>
@@ -523,6 +525,76 @@
                     <button id="test-endpoint" type="button" class="btn btn-danger">Test endpoint</button>
                     <button id="cancel-ontology-settings" type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
                     <button id="ok-ontology-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
+
+                    {{#if msg.text}}
+                        <ul class="parsley-error-list" style="display: block;">
+                            <li style="display: list-item;">{{msg.text}}</li>
+                        </ul>
+                    {{/if}}
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- End of modal -->
+
+</template>
+
+<template name="mysqlSettings">
+
+    <!-- Modal for new document -->
+    <div id="mysql-settings-form" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Project Settings</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="db-hostname" class="col-sm-3 control-label">Database hostname</label>
+                            <div class="col-sm-9">
+                                <input id="db-hostname" type="text" class="form-control" value="{{project.dbHostname}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="db-port" class="col-sm-3 control-label">Database port</label>
+                            <div class="col-sm-9">
+                                <input id="db-port" type="text" class="form-control" value="{{project.dbPort}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="db-username" class="col-sm-3 control-label">Database username</label>
+                            <div class="col-sm-9">
+                                <input id="db-username" type="text" class="form-control" value="{{project.dbUsername}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="db-password" class="col-sm-3 control-label">Database password</label>
+                            <div class="col-sm-9">
+                                <input id="db-password" type="password" class="form-control" value="{{project.dbPassword}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="db-name" class="col-sm-3 control-label">Database name</label>
+                            <div class="col-sm-9">
+                                <input id="db-name" type="text" class="form-control" value="{{project.dbName}}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+
+                    <button id="test-connection" type="button" class="btn btn-danger">Test connection</button>
+                    <button id="cancel-mysql-settings" type="button" class="btn btn-default" data-dismiss="modal">{{_ "cancel"}}</button>
+                    <button id="ok-mysql-settings" type="button" data-dismiss="modal" class="btn btn-primary">{{_ "ok"}}</button>
 
                     {{#if msg.text}}
                         <ul class="parsley-error-list" style="display: block;">
