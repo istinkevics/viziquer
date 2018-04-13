@@ -859,6 +859,20 @@ Template.mysqlSettings.events({
         });
     },
 
+
+	"click #import-schema-from-db": function (e) {
+		var list = {
+            projectId: Session.get("activeProject"),
+            versionId: Session.get("versionId"),
+            dbHostname: $("#db-hostname").val(),
+            dbPort: $("#db-port").val(),
+            dbUsername: $("#db-username").val(),
+            dbPassword: $("#db-password").val(),
+            dbName: $("#db-name").val(),
+        };
+
+        Utilities.callMeteorMethod('importMySQLSchema', list);
+	}
 });
 
 
