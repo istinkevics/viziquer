@@ -35,13 +35,13 @@ Interpreter.customMethods({
         })
     },
 
-    ExecuteSPARQL_from_selection: function () {
-        var editor = Interpreter.editor;
-        var elem_ids = _.keys(editor.getSelectedElements());
+    ExecuteMySQL_from_selection: function () {
+        const editor = Interpreter.editor;
+        const elem_ids = _.keys(editor.getSelectedElements());
 
-        var queries = genAbstractQueryForElementList(elem_ids);
+        const queries = genAbstractQueryForElementList(elem_ids);
         // ErrorHandling - just one query at a moment allowed
-        if (queries.length == 0) {
+        if (queries.length === 0) {
             Interpreter.showErrorMsg("No queries found.", -3);
             return;
         } else if (queries.length > 1) {
@@ -49,15 +49,14 @@ Interpreter.customMethods({
             return;
         };
         _.each(queries, function (q) {
-            //console.log(JSON.stringify(q,null,2));
-            var abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
-            var rootClass = abstractQueryTable["root"];
-            var result = generateMySQLtext(abstractQueryTable);
-            console.log(result["MySQLQuery"]);
-            Session.set('generatedMySQL', result["MySQLQuery"]);
-            setTextInMySQLEditor(result["MySQLQuery"]);
+            const abstractQueryTable = resolveTypesAndBuildSymbolTable(q);
+            const rootClass = abstractQueryTable['root'];
+            const result = generateMySQLtext(abstractQueryTable);
+            console.log(result['MySQLQuery']);
+            Session.set('generatedMySQL', result['MySQLQuery']);
+            setTextInMySQLEditor(result['MySQLQuery']);
 
-            if (result["blocking"] != true) executeSparqlString(result["MySQLQuery"]);
+            if (result["blocking"] != true) executeMySQLString(result["MySQLQuery"]);
         })
     },
 
@@ -233,57 +232,35 @@ function GenerateMySQLForIds(ids) {
     })
 }
 
-// string, {limit: , offset:, total_rows:} -->
-// Executes the given Sparql end shows result in the GUI
-function executeSparqlString(sparql, paging_info) {
-    // Default Data Set Name (Graph IRI) and SPARQL endpoint url
-    var graph_iri = "MiniBkusEN";
-    var endpoint = "http://185.23.162.167:8833/sparql";
-
-    var proj = Projects.findOne({ _id: Session.get("activeProject") });
-
-    if (proj && proj.uri && proj.endpoint) {
-        graph_iri = proj.uri;
-        endpoint = proj.endpoint;
-    } else {
-        Interpreter.showErrorMsg("Project endpoint not properly configured", -3);
-        return;
+// Executes the given MySQL query end shows result in the GUI
+function executeMySQLString(query) {
+    const proj = Projects.findOne({ _id: Session.get('activeProject') });
+    const list = {
+        projectId: Session.get('activeProject'),
+		versionId: Session.get('versionId'),
+		query,
+		dbHostname: proj.dbHostname,
+		dbPort: proj.dbPort,
+		dbUsername: proj.dbUsername,
+		dbPassword: proj.dbPassword,
+		dbName: proj.dbName,
     };
-
-    var list = {
-        projectId: Session.get("activeProject"),
-        versionId: Session.get("versionId"),
-        options: {
-            params: {
-                params: {
-                    "default-graph-uri": graph_iri,
-                    query: sparql,
-                },
-            },
-            endPoint: endpoint,
-            paging_info: paging_info
-        },
-    };
-    //console.log(list);
-    Utilities.callMeteorMethod("executeSparql", list, function (res) {
+    Utilities.callMeteorMethod('executeMysql', list, function (res) {
         if (res.status == 200) {
-            //console.log(res.result);
-            Session.set("executedSparql", res.result);
+			Session.set('executedMySQL', res.result);
+			console.log('aaaa', res.result);
             Interpreter.destroyErrorMsg();
             $('#vq-tab a[href="#executed"]').tab('show');
         } else {
-            Session.set("executedSparql", { limit_set: false, number_of_rows: 0 });
-            //console.error(res);
+            Session.set('executedMySQL', { limit_set: false, number_of_rows: 0 });
+
             if (res.status == 503) {
-                Interpreter.showErrorMsg("SPARQL execution failed: most probably the endpoint is not reachable.", -3)
+                Interpreter.showErrorMsg('MySQL execution failed: most probably the endpoint is not reachable.', -3)
             } else if (res.status == 504) {
-                Interpreter.showErrorMsg("SPARQL execution results unreadable.", -3)
+                Interpreter.showErrorMsg('MySQL execution results unreadable.', -3)
             } else {
-                var msg = ".";
-                if (res.error && res.error.response) {
-                    msg = ": " + res.error.response.content;
-                };
-                Interpreter.showErrorMsg("SPARQL execution failed" + msg, -3);
+                const msg = res.error && res.error.response ? `: ${res.error.response.content}` : '.';
+                Interpreter.showErrorMsg(`MySQL execution failed${msg}`, -3);
             };
 
         }

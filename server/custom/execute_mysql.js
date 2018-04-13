@@ -11,6 +11,42 @@ export const query = (connection, shape, sql, fields = {}) =>
     });
 
 Meteor.methods({
+    executeMysql(list) {
+        Future = Npm.require('fibers/future');
+        const future = new Future();
+        const userId = Meteor.userId();
+
+        if (is_project_member(userId, list)) {
+            if (!list.dbHostname || !list.dbPort || !list.dbUsername || !list.dbPassword || !list.dbName) {
+                console.error('No data specified', list);
+                future.return({ status: 500 });
+            }
+
+            // TODO: create generic function for connection
+
+            const connection = mysql.createConnection({
+                host: list.dbHostname,
+                port: list.dbPort,
+                user: list.dbUsername,
+                password: list.dbPassword,
+                database: list.dbName,
+            });
+
+            connection.connect(err => {
+                if (err) {
+                    console.error('Error connecting: ' + err.stack);
+                    future.return({ status: 500 });
+                    return;
+                }
+
+                query(connection, 'array', list.query)
+                    .then(result => {
+                        future.return({ status: 200, result });
+                    });
+            });
+        }
+        return future.wait();
+    },
     testMySQLProjectEndPoint: function (list) {
 
         const userId = Meteor.userId();
