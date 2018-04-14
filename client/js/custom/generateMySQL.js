@@ -186,8 +186,8 @@ Interpreter.customMethods({
         GenerateSPARQL_for_all_queries(elems_in_diagram_ids)
     },
 
-    ExecuteSPARQL_from_text: function (text, paging_info) {
-        executeSparqlString(text, paging_info);
+    ExecuteMySQL_from_text: function (query) {
+        executeMySQLString(query);
     },
 });
 
@@ -275,8 +275,7 @@ function GenerateSPARQL_for_all_queries(list_of_ids) {
 }
 
 function setTextInMySQLEditor(text) {
-    yasqe.setValue(text);
-    yasqe3.setValue(text);
+    MySQLEditor.setValue(text);
 }
 
 // generate MySQL query text

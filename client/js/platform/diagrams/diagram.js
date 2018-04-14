@@ -332,37 +332,6 @@ Template.sparqlForm_see_results.onRendered(function () {
     //yasqe.setValue("A");
 });
 
-yasqe = null;
-
-Template.mysqlForm.onRendered(function () {
-
-    yasqe3 = YASQE.fromTextArea(document.getElementById('generated-mysql'), {
-        sparql: {
-            showQueryButton: false,
-        },
-        //autoRefresh: true,
-    });
-
-    yasqe3.on('blur', function (editor) {
-        var val = editor.getValue();
-        Session.set('generatedMySQL', val);
-        yasqe.setValue(val);
-    });
-});
-
-Template.mysqlForm.helpers({
-    data() {
-        const result = Session.get('executedMySQL');
-        const rows = Array.isArray(result) ? result : [];
-        const header = rows[0] ? Object.keys(rows[0]) : [];
-
-        return {
-            header,
-            rows: rows.map(row => Object.values(row)),
-        };
-    },
-});
-
 Template.sparqlForm_see_results.events(sparql_form_events);
 
 var sparql_form_helpers = {
