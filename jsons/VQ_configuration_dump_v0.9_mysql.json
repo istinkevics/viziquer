@@ -1272,7 +1272,7 @@
                         "extensionPoints": [
                           {
                             "extensionPoint": "dynamicDropDown",
-                            "procedure": "VQgetAttributeNames"
+                            "procedure": "VQgetMySQLAttributeNames"
                           }
                         ],
                         "prefix": null,
