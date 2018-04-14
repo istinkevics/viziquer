@@ -1,8 +1,8 @@
 Meteor.methods({
     updateProjectMySQLSettings: function (list) {
-        var user_id = Meteor.userId();
+        var userId = Meteor.userId();
         console.log(list);
-        if (list['projectId'] && is_project_version_admin(user_id, list)) {
+        if (list['projectId'] && is_project_version_admin(userId, list)) {
             Projects.update({ _id: list.projectId }, {
                 $set: {
                     dbHostname: list.dbHostname,

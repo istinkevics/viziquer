@@ -798,7 +798,7 @@ Template.mysqlSettings.helpers({
         return Session.get('msg');
     },
     project() {
-        return Projects.findOne({ _id: 'YktRbstBaimkEPeeH' });
+        return Projects.findOne({ _id: Session.get('activeProject') });
     },
 });
 
