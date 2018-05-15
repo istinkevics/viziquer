@@ -137,6 +137,7 @@ Meteor.methods({
                         versionId: list.versionId,
                         data,
                     };
+                    console.log('Scheme loaded from database', newSchema);
                     Meteor.call('loadMysqlSchema', newSchema);
                 });
         });
