@@ -11,3 +11,11 @@ analytics = {
 	},
 
 };
+
+projectTypes = function() {
+    return [{
+        name: 'sparql'
+    }, {
+        name: 'mysql'
+    }];
+}

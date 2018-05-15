@@ -2,11 +2,8 @@ const isToolMySQL = function () {
     const project_id = Session.get('activeProject');
     const project = Projects.findOne({ _id: project_id });
     if (project) {
-        const compartment = CompartmentTypes.findOne({ toolId: project.toolId });
-        // TODO: add normal check :)
-        // console.log(compartment, project);
-        // return compartment && compartment.inputType.templateName === 'mysqlSchemaTree';
-        return true;
+        const tool = Tools.findOne({ _id: project.toolId });
+        return tool && tool.type === 'mysql';
     }
     return false;
 };
