@@ -19,7 +19,7 @@ Interpreter.customMethods({
             Interpreter.showErrorMsg("No queries found.", -3);
             return;
         } else if (queries.length > 1) {
-            Interpreter.showErrorMsg("More than one query found.", -3);
+            Interpreter.showErrorMsg("More than one query found. #1", -3);
             return;
         };
         _.each(queries, function (q) {
@@ -45,7 +45,7 @@ Interpreter.customMethods({
             Interpreter.showErrorMsg("No queries found.", -3);
             return;
         } else if (queries.length > 1) {
-            Interpreter.showErrorMsg("More than one query found.", -3);
+            Interpreter.showErrorMsg("More than one query found. #2", -3);
             return;
         };
         _.each(queries, function (q) {
@@ -97,7 +97,7 @@ Interpreter.customMethods({
                 Interpreter.showErrorMsg("No queries found.", -3);
                 return;
             } else if (queries.length > 1) {
-                Interpreter.showErrorMsg("More than one query found.", -3);
+                Interpreter.showErrorMsg("More than one query found. #3", -3);
                 return;
             };
             _.each(queries, function (q) {
@@ -202,7 +202,7 @@ function GenerateMySQLForIds(ids) {
         Interpreter.showErrorMsg("No queries found.", -3);
         return;
     } else if (queries.length > 1) {
-        Interpreter.showErrorMsg("More than one query found.", -3);
+        Interpreter.showErrorMsg("More than one query found. #4", -3);
         return;
     };
 
@@ -287,7 +287,7 @@ function generateMySQLtext(abstractQueryTable) {
     const generateIdsResult = generateIds(rootClass);
     const referenceTable = generateIdsResult['referenceTable'];
 
-    // Starting query...
+    // Starting query, each block separated by new line...
     const query = squel.select({ separator: "\n" });
 
     // Distinct
@@ -310,7 +310,11 @@ function generateMySQLtext(abstractQueryTable) {
     // Fields
     if (rootClass.fields) {
         rootClass.fields.forEach(field => {
-            query.field(field.exp, field.alias);
+            if (field.exp.includes('GROUP_CONCAT')) {
+                query.group(field.exp);
+            } else {
+                query.field(field.exp, field.alias);
+            }
         });
     }
 
@@ -381,9 +385,13 @@ function generateMySQLtext(abstractQueryTable) {
 function generateMySQLJoins(query, data, referenceTable) {
     if (data.children) {
         data.children.forEach(child => {
-            if (child.linkType === 'OPTIONAL') {
+            if (child.linkType === 'FULL') {
+                query.outer_join(child.identification.localName);
+            } else if (child.linkType === 'LEFT') {
                 query.left_join(child.identification.localName);
-            } else if (child.isSubQuery) {
+            } else if (child.linkType === 'LEFT') {
+                query.right_join(child.identification.localName);
+            } else {
                 query.join(child.identification.localName);
             }
         });

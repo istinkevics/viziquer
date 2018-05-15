@@ -930,6 +930,13 @@ VQ_Element.prototype = {
         return "NOT";
       } else if (this.getCompartmentValue("Optional Link")=="true") {
         return "OPTIONAL";
+      // Didn't want to use same naming even though it can be done.
+      } else if (this.getCompartmentValue('Left Join') == 'true' && this.getCompartmentValue('Right Join') == 'true') {
+        return "FULL";
+      } else if (this.getCompartmentValue('Left Join') == 'true') {
+        return "LEFT";
+      } else if (this.getCompartmentValue('Right Join') == 'true') {
+        return "RIGHT";
       } else { return "REQUIRED";};
     } else { return null;};
   },
