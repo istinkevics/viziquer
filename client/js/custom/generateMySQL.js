@@ -278,15 +278,8 @@ function setTextInMySQLEditor(text) {
     MySQLEditor.setValue(text);
 }
 
-// generate MySQL query text
-// abstractQueryTable - abstract query sintex table
-function generateMySQLtext(abstractQueryTable) {
+function createMySQLQueryFromElement(rootClass, referenceTable) {
     const messages = [];
-    const blocking = false;
-    const rootClass = abstractQueryTable['root'];
-    const generateIdsResult = generateIds(rootClass);
-    const referenceTable = generateIdsResult['referenceTable'];
-
     // Starting query, each block separated by new line...
     const query = squel.select({ separator: "\n" });
 
@@ -377,6 +370,20 @@ function generateMySQLtext(abstractQueryTable) {
         Interpreter.showErrorMsg(showMessages, -3);
     }
 
+    return query;
+}
+
+// generate MySQL query text
+// abstractQueryTable - abstract query sintex table
+function generateMySQLtext(abstractQueryTable) {
+    const messages = [];
+    const blocking = false;
+    const rootClass = abstractQueryTable['root'];
+    const generateIdsResult = generateIds(rootClass);
+    const referenceTable = generateIdsResult['referenceTable'];
+
+    const query = createMySQLQueryFromElement(rootClass, referenceTable);
+
     const MySQLQuery = query.toString();
     console.log(abstractQueryTable);
     return { MySQLQuery, messages, blocking };
@@ -386,7 +393,8 @@ function generateMySQLJoins(query, data, referenceTable) {
     if (data.children) {
         data.children.forEach(child => {
             if (child.isSubQuery) {
-
+                const subQuery = createMySQLQueryFromElement(child, referenceTable);
+                query.field(subQuery);
             } else {
                 const relation = child.linkRelation ? child.linkRelation : null;
                 if (child.linkType === 'FULL') {
