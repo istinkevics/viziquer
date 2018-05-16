@@ -333,6 +333,7 @@ genAbstractQueryForElementList = function (element_id_list) {
                 {
                     linkIdentification:{_id: link.link._id(),localName: link.link.getName()},
                     linkType: link.link.getType(),
+                    linkRelation: link.link.getLinkRelation(),
                     isSubQuery: link.link.isSubQuery(),
                     isGlobalSubQuery: link.link.isGlobalSubQuery(),
                     identification: { _id: elem._id(), localName: elem.getName()},

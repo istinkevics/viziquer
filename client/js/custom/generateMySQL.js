@@ -385,14 +385,15 @@ function generateMySQLtext(abstractQueryTable) {
 function generateMySQLJoins(query, data, referenceTable) {
     if (data.children) {
         data.children.forEach(child => {
+            const relation = child.linkRelation ? child.linkRelation : null;
             if (child.linkType === 'FULL') {
-                query.outer_join(child.identification.localName);
+                query.outer_join(child.identification.localName, null, relation);
             } else if (child.linkType === 'LEFT') {
-                query.left_join(child.identification.localName);
+                query.left_join(child.identification.localName, null, relation);
             } else if (child.linkType === 'LEFT') {
-                query.right_join(child.identification.localName);
+                query.right_join(child.identification.localName, null, relation);
             } else {
-                query.join(child.identification.localName);
+                query.join(child.identification.localName, null, relation);
             }
         });
     }

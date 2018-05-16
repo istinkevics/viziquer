@@ -940,6 +940,9 @@ VQ_Element.prototype = {
       } else { return "REQUIRED";};
     } else { return null;};
   },
+  getLinkRelation: function() {
+    return this.getCompartmentValue('Relation');
+  },
   // determines whether a class rather than instance is searched
   isVariable: function() {
     var name = this.getName();
