@@ -2333,8 +2333,8 @@
                   "tension": 0,
                   "opacity": 1,
                   "dash": [
-                    "6",
-                    "5"
+                    "0",
+                    "0"
                   ]
                 },
                 "startShapeStyle": {
@@ -2517,7 +2517,7 @@
                   "values": [
                     {
                       "compartmentStyle": "NoStyle",
-                      "elementStyle": "NoStyle",
+                      "elementStyle": "8e68e4c97c060c9414a3bb99",
                       "input": "true"
                     },
                     {
@@ -2537,7 +2537,7 @@
                       "fill": "#000000",
                       "padding": 0,
                       "placement": "end-left",
-                      "visible": true,
+                      "visible": false,
                       "fontSize": 16,
                       "fontStyle": "normal",
                       "fontFamily": "Calibri",
@@ -2596,7 +2596,7 @@
                   "values": [
                     {
                       "compartmentStyle": "NoStyle",
-                      "elementStyle": "NoStyle",
+                      "elementStyle": "0ac14dd5b386e6e27a7267bc",
                       "input": "true"
                     },
                     {
