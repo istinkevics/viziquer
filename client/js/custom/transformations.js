@@ -425,6 +425,16 @@ Interpreter.customMethods({
 			 var elem = new VQ_Element(c["elementId"]);
 			 elem.setLinkType(lt);
 		}
+    },
+
+    VQsetIsLeftJoin: function(params) {
+		const c = Compartments.findOne({_id:params["compartmentId"]});
+		if (c) {
+             const input = params['input'];
+             const lt = input == 'true' ? 'SQL_REQUIRED' : 'SQL_NOT';
+			 const elem = new VQ_Element(c['elementId']);
+			 elem.setLinkType(lt);
+		}
 	},
 
 	VQSetHideDefaultLinkName: function(params) {

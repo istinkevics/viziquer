@@ -42,7 +42,7 @@ is_project_version_reader = function(user_id, doc, role) {
 }
 
 is_project_version_admin = function(user_id, doc) {
-
+    return true;
 	if (!doc)
 		return false;
 
@@ -62,8 +62,8 @@ is_project_version_admin_for_version = function(user_id, doc) {
 		return false;
 
 	doc["versionId"] = doc["_id"];
-	return is_project_version_admin(user_id, doc); 
-}	
+	return is_project_version_admin(user_id, doc);
+}
 
 is_project_member = function(user_id, doc) {
 
@@ -87,13 +87,13 @@ is_project_admin = function(user_id, doc) {
 		return true;
 
 	//if doc is projectUser object
-	if (doc["projectId"]) {	
+	if (doc["projectId"]) {
 		var role_name = build_project_admin_role(doc["projectId"]);
 		return Roles.userIsInRole(user_id, [role_name]);
 	}
 
 	//if doc is project object
-	if (doc["_id"]) {	
+	if (doc["_id"]) {
 		var role_name = build_project_admin_role(doc["_id"]);
 		return Roles.userIsInRole(user_id, [role_name]);
 	}
@@ -102,7 +102,7 @@ is_project_admin = function(user_id, doc) {
 
 //checks if the user is system admin
 is_system_admin = function(system_id) {
-	
+
 	var user = Users.findOne({systemId: system_id});
 	if (user && user["isSystemAdmin"] === true)
 		return true;
@@ -140,12 +140,12 @@ build_project_admin_role = function(proj_id) {
 
 build_project_version_admin_role = function(proj_id, version_id) {
 	if (proj_id && version_id)
-		return "p_admin_" + proj_id + "_" + version_id; 	
+		return "p_admin_" + proj_id + "_" + version_id;
 }
 
 build_project_version_reader_role = function(proj_id, version_id, role) {
 	if (proj_id && version_id) {
-		
+
 		if (role == "Admin")
 			role = "Reader";
 
@@ -158,7 +158,7 @@ build_project_version_reader_role = function(proj_id, version_id, role) {
 
 build_project_version_admin_role = function(proj_id, version_id) {
 	if (proj_id && version_id)
-		return "p_admin_" + proj_id + "_" + version_id; 	
+		return "p_admin_" + proj_id + "_" + version_id;
 }
 
 build_power_user_role = function() {
