@@ -2948,6 +2948,7 @@ Schemas.Tools = new SimpleSchema({
         type: String,
         allowedValues: ['sparql', 'mysql'],
         label: "Projects.type",
+        defaultValue: 'sparql',
     },
 
     archive: {
